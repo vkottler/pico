@@ -4,7 +4,55 @@ includes:
 
 default_target: pico
 
+cflag_groups:
+  pico:
+    - -g
+    - -ggdb
+
+    # Required for pico-sdk.
+    - -Wno-pedantic
+
+    # Includes for pico-sdk.
+    - -Ipico-sdk/src/boards/include
+    - -Ipico-sdk/src/common/pico_base/include
+    - -Ipico-sdk/src/common/pico_stdlib/include
+    - -Ipico-sdk/src/common/pico_time/include
+    - -Ipico-sdk/src/common/pico_sync/include
+    - -Ipico-sdk/src/common/pico_util/include
+    - -Ipico-sdk/src/common/pico_binary_info/include
+    - -Ipico-sdk/src/rp2_common/boot_stage2/asminclude
+    - -Ipico-sdk/src/rp2_common/boot_stage2/include
+    - -Ipico-sdk/src/rp2_common/cmsis/include
+    - -Ipico-sdk/src/rp2_common/pico_platform/include
+    - -Ipico-sdk/src/rp2_common/pico_printf/include
+    - -Ipico-sdk/src/rp2_common/pico_bootrom/include
+    - -Ipico-sdk/src/rp2_common/pico_multicore/include
+    - -Ipico-sdk/src/rp2_common/hardware_pio/include
+    - -Ipico-sdk/src/rp2_common/hardware_gpio/include
+    - -Ipico-sdk/src/rp2_common/hardware_base/include
+    - -Ipico-sdk/src/rp2_common/hardware_claim/include
+    - -Ipico-sdk/src/rp2_common/hardware_irq/include
+    - -Ipico-sdk/src/rp2_common/hardware_sync/include
+    - -Ipico-sdk/src/rp2_common/hardware_timer/include
+    - -Ipico-sdk/src/rp2_common/hardware_uart/include
+    - -Ipico-sdk/src/rp2_common/hardware_clocks/include
+    - -Ipico-sdk/src/rp2_common/hardware_resets/include
+    - -Ipico-sdk/src/rp2_common/hardware_watchdog/include
+    - -Ipico-sdk/src/rp2_common/hardware_pll/include
+    - -Ipico-sdk/src/rp2_common/hardware_xosc/include
+    - -Ipico-sdk/src/rp2040/hardware_regs/include
+    - -Ipico-sdk/src/rp2040/hardware_structs/include
+
+ldflag_groups:
+  pico: [-Tsrc/link.ld, -lsemihost, --oslib=semihost]
+
 variants:
   pico:
     prefix: "arm-picolibc-eabi-"
-    cflag_groups: [picolib]
+    cflag_groups: [picolib, m0plus, armv6m]
+
+dependencies:
+  - github: {repo: coral, owner: &self vkottler}
+    as_source: true
+  - github: {repo: hal-rp2040, owner: *self}
+    as_source: true

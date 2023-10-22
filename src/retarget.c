@@ -8,20 +8,23 @@
 #include <stdio.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-void _exit(int code) {
-  (void)code;
+    void _exit(int code)
+    {
+        (void)code;
 
-  while (1) {
-    ;
-  }
-}
+        while (1)
+        {
+            ;
+        }
+    }
 
-FILE *const stdout = NULL;
-FILE *const stdin = NULL;
-FILE *const stderr = NULL;
+    FILE *const stdout = NULL;
+    FILE *const stdin = NULL;
+    FILE *const stderr = NULL;
 
 #ifdef __cplusplus
 }

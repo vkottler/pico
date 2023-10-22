@@ -15,3 +15,6 @@ mklocal
 site.env
 dist
 third-party
+toolchains
+.env
+.gdbinit
