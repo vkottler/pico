@@ -1,0 +1,26 @@
+# =====================================
+# generator=datazen
+# version=3.1.4
+# hash=ce3a0062a3874756e67dcc508bc2ad90
+# =====================================
+---
+project:
+  name: pico
+
+  github: {owner: &self vkottler}
+  version: {major: 0, minor: 1, patch: 0}
+variants:
+  clang:
+    suffix: &clang_version "-15"
+    enabled: false
+
+  # Disable regular targets.
+  debug:
+    enabled: false
+  opt:
+    enabled: false
+  clang-opt:
+    enabled: false
+
+includes:
+  - local/yambs.yaml

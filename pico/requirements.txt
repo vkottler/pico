@@ -1,0 +1,12 @@
+# Workflow tasks.
+vmklib
+yambs
+
+# Documentation.
+sphinx
+sphinx-book-theme
+breathe
+exhale
+
+# Linting and QA.
+yamllint

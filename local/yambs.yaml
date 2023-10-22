@@ -1,0 +1,10 @@
+---
+includes:
+  - ../config/python/yambs/cflag_groups.yaml
+
+default_target: pico
+
+variants:
+  pico:
+    prefix: "arm-picolibc-eabi-"
+    cflag_groups: [picolib]

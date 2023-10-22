@@ -1,0 +1,9 @@
+---
+name: pico
+description: A firmware project for Raspberry Pi microcontrollers.
+embedded: true
+
+version:
+  major: 0
+  minor: 1
+  patch: 0
