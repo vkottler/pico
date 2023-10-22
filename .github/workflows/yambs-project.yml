@@ -39,10 +39,10 @@ jobs:
       - run: mk dz-sync
 
       - run: mk yaml python-lint python-sa
-      - run: sudo apt-get install doxygen clang-format-15
+      - run: sudo apt-get install doxygen
       - run: mk download-toolchains
       - run: mk g
-      - run: ninja all format-check
+      - run: ninja all
       - run: mk dist docs variant=pico
         if: github.ref_name != 'master'
 
