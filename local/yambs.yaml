@@ -44,15 +44,16 @@ cflag_groups:
     - -Ipico-sdk/src/rp2040/hardware_structs/include
 
 ldflag_groups:
-  pico: [-Tsrc/link.ld, -lsemihost, --oslib=semihost]
+  pico: [-Tsrc/link.ld]
 
 variants:
   pico:
     prefix: "arm-picolibc-eabi-"
     cflag_groups: [picolib, m0plus, armv6m]
+    ldflag_groups: [semihost]
 
 dependencies:
-  - github: {repo: coral, owner: &self vkottler}
+  - github: {repo: picolibc-semihost, owner: &self vkottler}
     as_source: true
   - github: {repo: hal-rp2040, owner: *self}
     as_source: true
