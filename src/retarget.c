@@ -1,6 +1,5 @@
 /**
  * \file
- *
  * \brief Stubs for library hooks.
  */
 
