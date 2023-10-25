@@ -2,11 +2,11 @@
     =====================================
     generator=datazen
     version=3.1.4
-    hash=ab0eb9cc0b10157a48fbe0f086b8ae67
+    hash=a958878a86c3792bcac962690b8cc1e7
     =====================================
 -->
 
-# pico ([0.2.0](https://github.com/vkottler/pico/releases/tag/0.2.0))
+# pico ([0.2.1](https://github.com/vkottler/pico/releases/tag/0.2.1))
 
 [![codecov](https://codecov.io/gh/vkottler/pico/branch/master/graph/badge.svg)](https://codecov.io/gh/vkottler/pico)
 ![Build Status](https://github.com/vkottler/pico/actions/workflows/yambs-project.yml/badge.svg)
