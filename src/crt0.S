@@ -1,1 +1,0 @@
-../pico-sdk/src/rp2_common/pico_standard_link/crt0.S
