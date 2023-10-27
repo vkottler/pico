@@ -1,3 +1,5 @@
+#pragma once
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic ignored "-Wvariadic-macros"

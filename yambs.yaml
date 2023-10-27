@@ -1,14 +1,14 @@
 # =====================================
 # generator=datazen
 # version=3.1.4
-# hash=e8f8f6ca55b6f5bfd3e41e309a47b870
+# hash=168a0a9687cdf8ed8eaaa6e43d1b55ca
 # =====================================
 ---
 project:
   name: pico
 
   github: {owner: &self vkottler}
-  version: {major: 0, minor: 2, patch: 2}
+  version: {major: 0, minor: 2, patch: 3}
 variants:
   clang:
     suffix: &clang_version "-15"
