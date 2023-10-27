@@ -5,6 +5,8 @@ includes:
 
 default_target: pico
 
+uf2_family: RP2040
+
 cflag_groups:
   pico: [-g, -ggdb]
 
@@ -16,6 +18,7 @@ variants:
     prefix: "arm-picolibc-eabi-"
     cflag_groups: [picolib, m0plus, armv6m, pico-sdk]
     ldflag_groups: [semihost]
+    targets: [apps, lib, uf2s]
 
 dependencies:
   - github: {repo: picolibc-semihost, owner: &self vkottler}
