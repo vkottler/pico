@@ -18,7 +18,7 @@ variants:
     prefix: "arm-picolibc-eabi-"
     cflag_groups: [picolib, m0plus, armv6m, pico-sdk]
     ldflag_groups: [semihost]
-    targets: [apps, lib, uf2s]
+    targets: [uf2s]
 
 dependencies:
   - github: {repo: picolibc-semihost, owner: &self vkottler}
