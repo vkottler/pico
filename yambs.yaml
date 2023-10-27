@@ -1,17 +1,17 @@
 # =====================================
 # generator=datazen
 # version=3.1.4
-# hash=e8f8f6ca55b6f5bfd3e41e309a47b870
+# hash=ab377c00f5dd2a34c28d9032f22d626d
 # =====================================
 ---
 project:
   name: pico
 
   github: {owner: &self vkottler}
-  version: {major: 0, minor: 2, patch: 2}
+  version: {major: 0, minor: 2, patch: 3}
 variants:
   clang:
-    suffix: &clang_version "-15"
+    suffix: &clang_version "-17"
     enabled: false
 
   # Disable regular targets.

@@ -2,6 +2,7 @@
 #include "pico_headers.h"
 #include "picolibc-semihost/App.h"
 #include "system.h"
+#include "uart_stdio.h"
 
 static constexpr uint led_pin = 25;
 
@@ -17,9 +18,16 @@ void do_led(CommandLine &cli)
     printf("Toggling LED.\n");
 }
 
+void do_exit(CommandLine &cli)
+{
+    (void)cli;
+    reset(true);
+}
+
 void register_commands(CommandLineApp &app)
 {
     app.add_handler("led", do_led, "toggle the LED on or off");
+    app.add_handler("exit", do_exit, "exit the application");
 }
 
 void core1_app(void)
@@ -42,12 +50,10 @@ void init(uint led_pin)
     /* Initialize UART pins and peripheral. */
     gpio_set_function(0, GPIO_FUNC_UART);
     gpio_set_function(1, GPIO_FUNC_UART);
-    uart_init(uart0, 115200);
+    uart_init(stdio_uart, 115200);
 
     dump_clocks();
 }
-
-char input[BUFSIZ];
 
 int main(void)
 {
@@ -59,11 +65,35 @@ int main(void)
 
     App app(register_commands);
 
-    // need to connect uart to stdin/stdout
+    auto &uart = get_stdio_uart();
 
     while (true)
     {
-        app.poll_stdin(input);
+        /* Un-comment when leveraging semihosting for the CLI. */
+        // char input[BUFSIZ];
+        // app.poll_stdin(input);
+
+        uart.dispatch();
+
+        while (!uart.rx.empty())
+        {
+            char data;
+            assert(uart.rx.pop(data));
+
+            bool do_prompt = data == '\r';
+
+            if (do_prompt)
+            {
+                data = '\n';
+            }
+
+            app.buf.push_blocking(data);
+
+            if (do_prompt)
+            {
+                app.logger.log(prompt);
+            }
+        }
     }
 
     return 0;
