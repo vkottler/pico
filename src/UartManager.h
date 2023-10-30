@@ -15,26 +15,13 @@ class UartManager
                                              tx_depth, rx_depth, char>;
 
   public:
-    UartManager(uart_inst_t *_uart, bool _echo = true,
-                bool _add_carriage_return = true)
-        : FdBuffer(), uart(_uart), echo(_echo),
-          add_carriage_return(_add_carriage_return)
+    UartManager(uart_inst_t *_uart = nullptr, bool _echo = true)
+        : FdBuffer(), uart(_uart), echo(_echo)
     {
     }
 
     void putc_block(uint8_t data)
     {
-        switch (data)
-        {
-        case '\n':
-            /* If we should add carriage returns, add it first. */
-            if (add_carriage_return)
-            {
-                putc_block('\r');
-            }
-            break;
-        }
-
         this->tx.push_blocking(data);
     }
 
@@ -43,53 +30,72 @@ class UartManager
         this->tx.flush();
 
         /* Wait for UART to be completely empty. */
-        uart_tx_wait_blocking(uart);
+        if (uart)
+        {
+            uart_tx_wait_blocking(uart);
+        }
+
+        stdio_flush();
     }
 
     inline void service_tx_impl(FdBuffer::TxBuffer *buf)
     {
         char data;
-        while (uart_is_writable(uart) and !buf->empty())
+
+        while (!buf->empty() and
+               (not uart or (uart and uart_is_writable(uart))))
         {
             assert(buf->pop(data));
-            uart_get_hw(uart)->dr = data;
+
+            /* Write UART. */
+            if (uart)
+            {
+                uart_get_hw(uart)->dr = data;
+            }
+
+            /* Write via pico-sdk stdio. */
+            putchar_raw(data);
+        }
+    }
+
+    inline void receive_byte(FdBuffer::RxBuffer *buf, uint8_t data)
+    {
+        assert(buf->push(data));
+
+        if (echo)
+        {
+            switch (data)
+            {
+            case '\r':
+                putc_block('\n');
+                [[fallthrough]];
+            default:
+                putc_block(data);
+            }
         }
     }
 
     inline void service_rx_impl(FdBuffer::RxBuffer *buf)
     {
-        uint8_t data;
-        while (uart_is_readable(uart) and !buf->full())
+        /* Check hardware UART. */
+        if (uart)
         {
-            data = uart_getc(uart);
-            assert(buf->push(data));
-
-            if (echo)
+            while (!buf->full() and uart_is_readable(uart))
             {
-                switch (data)
-                {
-                case '\r':
-                    putc_block('\n');
-
-                    /*
-                     * If carriage returns are getting added automatically,
-                     * the '\n' put will already add one.
-                     */
-                    if (add_carriage_return)
-                    {
-                        break;
-                    }
-
-                    [[fallthrough]];
-                default:
-                    putc_block(data);
-                }
+                receive_byte(buf, uart_getc(uart));
             }
+        }
+
+        /* Check pico-sdk stdio. */
+        int stdio_data;
+        while (!buf->full() and
+               ((stdio_data = getchar_timeout_us(0)) != PICO_ERROR_TIMEOUT))
+        {
+            receive_byte(buf, stdio_data);
         }
     }
 
   protected:
     uart_inst_t *uart;
     bool echo;
-    bool add_carriage_return;
 };
