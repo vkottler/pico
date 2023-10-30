@@ -1,8 +1,8 @@
 /* internal */
 #include "uart_stdio.h"
 
-uart_inst_t *const stdio_uart = uart0;
-
+// uart_inst_t *const stdio_uart = uart0;
+uart_inst_t *const stdio_uart = nullptr;
 static UartInterface uart(stdio_uart);
 
 UartInterface &get_stdio_uart()
@@ -15,8 +15,13 @@ extern "C" int putc_extra(char c, FILE *file, bool semihosting_enabled)
     (void)file;
     (void)semihosting_enabled;
 
-    uart.putc_block(c);
+    /* Handle newlines automatically. */
+    if (c == '\n')
+    {
+        uart.putc_block('\r');
+    }
 
+    uart.putc_block(c);
     return 0;
 }
 

@@ -1,34 +1,6 @@
 /* internal */
-#include "pico_headers.h"
-#include "picolibc-semihost/App.h"
-#include "system.h"
+#include "cli.h"
 #include "uart_stdio.h"
-
-static constexpr uint led_pin = 25;
-
-static inline void gpio_toggle(uint gpio)
-{
-    gpio_xor_mask(1u << gpio);
-}
-
-void do_led(CommandLine &cli)
-{
-    (void)cli;
-    gpio_toggle(led_pin);
-    printf("Toggling LED.\n");
-}
-
-void do_exit(CommandLine &cli)
-{
-    (void)cli;
-    reset(true);
-}
-
-void register_commands(CommandLineApp &app)
-{
-    app.add_handler("led", do_led, "toggle the LED on or off");
-    app.add_handler("exit", do_exit, "exit the application");
-}
 
 void core1_app(void)
 {
@@ -37,27 +9,30 @@ void core1_app(void)
         // some kind of state machine thing?
 
         /* LED heartbeat. */
-        gpio_toggle(led_pin);
+        gpio_xor_mask(1u << led_pin);
         sleep_until(delayed_by_us(get_absolute_time(), 100 * 1000));
     }
 }
 
-void init(uint led_pin)
+void init(void)
 {
+    stdio_usb_init();
+
     gpio_init(led_pin);
     gpio_set_dir(led_pin, GPIO_OUT);
 
     /* Initialize UART pins and peripheral. */
-    gpio_set_function(0, GPIO_FUNC_UART);
-    gpio_set_function(1, GPIO_FUNC_UART);
-    uart_init(stdio_uart, 115200);
-
-    dump_clocks();
+    if (stdio_uart)
+    {
+        gpio_set_function(PICO_DEFAULT_UART_TX_PIN, GPIO_FUNC_UART);
+        gpio_set_function(PICO_DEFAULT_UART_RX_PIN, GPIO_FUNC_UART);
+        uart_init(stdio_uart, 115200);
+    }
 }
 
 int main(void)
 {
-    init(led_pin);
+    init();
 
     /* Start other processor. */
     multicore_reset_core1();
