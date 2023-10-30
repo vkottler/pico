@@ -46,9 +46,15 @@ void do_clocks(CommandLine &cli)
            frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_RTC));
 }
 
+void do_net(CommandLine &cli)
+{
+    (void)cli;
+}
+
 void register_commands(CommandLineApp &app)
 {
     app.add_handler("led", do_led, "toggle the LED on or off");
     app.add_handler("exit", do_exit, "exit the application");
     app.add_handler("clocks", do_clocks);
+    app.add_handler("net", do_net);
 }
