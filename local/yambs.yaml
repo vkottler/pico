@@ -2,6 +2,8 @@
 includes:
   - ../config/python/yambs/cflag_groups.yaml
   - ../config/python/yambs/pico-sdk.yaml
+  - ../config/python/yambs/ioLibrary_Driver.yaml
+  - ../config/python/yambs/RP2040-HAT-C.yaml
 
 default_target: pico
 
@@ -16,7 +18,13 @@ ldflag_groups:
 variants:
   pico:
     prefix: "arm-picolibc-eabi-"
-    cflag_groups: [picolib, m0plus, armv6m, pico-sdk]
+    cflag_groups:
+      - picolib
+      - m0plus
+      - armv6m
+      - pico-sdk
+      - ioLibrary_Driver
+      - RP2040-HAT-C
     ldflag_groups: [semihost]
     targets: [uf2s]
 

@@ -11,10 +11,12 @@
 #include "hardware/gpio.h"
 #include "hardware/structs/scb.h"
 #include "hardware/uart.h"
+#include "pico/binary_info.h"
 #include "pico/bootrom.h"
 #include "pico/critical_section.h"
 #include "pico/multicore.h"
 #include "pico/stdio_usb.h"
+#include "pico/stdlib.h"
 #include "pico/time.h"
 
 #pragma GCC diagnostic pop
