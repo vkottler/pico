@@ -1,42 +1,22 @@
-/**
- * Copyright (c) 2022 WIZnet Co.,Ltd
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-/**
- * ----------------------------------------------------------------------------------------------------
- * Includes
- * ----------------------------------------------------------------------------------------------------
- */
 #include <stdio.h>
 
-#include "pico/stdlib.h"
 #include "hardware/gpio.h"
+#include "pico/stdlib.h"
 
-#include "wizchip_conf.h"
 #include "socket.h"
 #include "w5x00_gpio_irq.h"
+#include "wizchip_conf.h"
 
-/**
- * ----------------------------------------------------------------------------------------------------
- * Variables
- * ----------------------------------------------------------------------------------------------------
- */
 static void (*callback_ptr)(void);
 
-/**
- * ----------------------------------------------------------------------------------------------------
- * Functions
- * ----------------------------------------------------------------------------------------------------
- */
 /* GPIO */
 void wizchip_gpio_interrupt_initialize(uint8_t socket, void (*callback)(void))
 {
     uint16_t reg_val;
     int ret_val;
 
-    reg_val = (SIK_CONNECTED | SIK_DISCONNECTED | SIK_RECEIVED | SIK_TIMEOUT); // except SendOK
+    reg_val = (SIK_CONNECTED | SIK_DISCONNECTED | SIK_RECEIVED |
+               SIK_TIMEOUT); // except SendOK
     ret_val = ctlsocket(socket, CS_SET_INTMASK, (void *)&reg_val);
 
 #if (_WIZCHIP_ == W5100S)
@@ -47,7 +27,8 @@ void wizchip_gpio_interrupt_initialize(uint8_t socket, void (*callback)(void))
     ret_val = ctlwizchip(CW_SET_INTRMASK, (void *)&reg_val);
 
     callback_ptr = callback;
-    gpio_set_irq_enabled_with_callback(PIN_INT, GPIO_IRQ_EDGE_FALL, true, &wizchip_gpio_interrupt_callback);
+    gpio_set_irq_enabled_with_callback(PIN_INT, GPIO_IRQ_EDGE_FALL, true,
+                                       &wizchip_gpio_interrupt_callback);
 }
 
 static void wizchip_gpio_interrupt_callback(uint gpio, uint32_t events)

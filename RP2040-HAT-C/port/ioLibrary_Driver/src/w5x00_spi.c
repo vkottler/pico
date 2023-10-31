@@ -13,8 +13,8 @@
 
 #include "port_common.h"
 
-#include "wizchip_conf.h"
 #include "w5x00_spi.h"
+#include "wizchip_conf.h"
 
 /**
  * ----------------------------------------------------------------------------------------------------
@@ -80,19 +80,21 @@ static void wizchip_read_burst(uint8_t *pBuf, uint16_t len)
 
     channel_config_set_read_increment(&dma_channel_config_tx, false);
     channel_config_set_write_increment(&dma_channel_config_tx, false);
-    dma_channel_configure(dma_tx, &dma_channel_config_tx,
-                          &spi_get_hw(SPI_PORT)->dr, // write address
-                          &dummy_data,               // read address
-                          len,                       // element count (each element is of size transfer_data_size)
-                          false);                    // don't start yet
+    dma_channel_configure(
+        dma_tx, &dma_channel_config_tx,
+        &spi_get_hw(SPI_PORT)->dr, // write address
+        &dummy_data,               // read address
+        len,    // element count (each element is of size transfer_data_size)
+        false); // don't start yet
 
     channel_config_set_read_increment(&dma_channel_config_rx, false);
     channel_config_set_write_increment(&dma_channel_config_rx, true);
-    dma_channel_configure(dma_rx, &dma_channel_config_rx,
-                          pBuf,                      // write address
-                          &spi_get_hw(SPI_PORT)->dr, // read address
-                          len,                       // element count (each element is of size transfer_data_size)
-                          false);                    // don't start yet
+    dma_channel_configure(
+        dma_rx, &dma_channel_config_rx,
+        pBuf,                      // write address
+        &spi_get_hw(SPI_PORT)->dr, // read address
+        len,    // element count (each element is of size transfer_data_size)
+        false); // don't start yet
 
     dma_start_channel_mask((1u << dma_tx) | (1u << dma_rx));
     dma_channel_wait_for_finish_blocking(dma_rx);
@@ -104,19 +106,21 @@ static void wizchip_write_burst(uint8_t *pBuf, uint16_t len)
 
     channel_config_set_read_increment(&dma_channel_config_tx, true);
     channel_config_set_write_increment(&dma_channel_config_tx, false);
-    dma_channel_configure(dma_tx, &dma_channel_config_tx,
-                          &spi_get_hw(SPI_PORT)->dr, // write address
-                          pBuf,                      // read address
-                          len,                       // element count (each element is of size transfer_data_size)
-                          false);                    // don't start yet
+    dma_channel_configure(
+        dma_tx, &dma_channel_config_tx,
+        &spi_get_hw(SPI_PORT)->dr, // write address
+        pBuf,                      // read address
+        len,    // element count (each element is of size transfer_data_size)
+        false); // don't start yet
 
     channel_config_set_read_increment(&dma_channel_config_rx, false);
     channel_config_set_write_increment(&dma_channel_config_rx, false);
-    dma_channel_configure(dma_rx, &dma_channel_config_rx,
-                          &dummy_data,               // write address
-                          &spi_get_hw(SPI_PORT)->dr, // read address
-                          len,                       // element count (each element is of size transfer_data_size)
-                          false);                    // don't start yet
+    dma_channel_configure(
+        dma_rx, &dma_channel_config_rx,
+        &dummy_data,               // write address
+        &spi_get_hw(SPI_PORT)->dr, // read address
+        len,    // element count (each element is of size transfer_data_size)
+        false); // don't start yet
 
     dma_start_channel_mask((1u << dma_tx) | (1u << dma_rx));
     dma_channel_wait_for_finish_blocking(dma_rx);
@@ -161,9 +165,10 @@ void wizchip_spi_initialize(void)
     channel_config_set_transfer_data_size(&dma_channel_config_tx, DMA_SIZE_8);
     channel_config_set_dreq(&dma_channel_config_tx, DREQ_SPI0_TX);
 
-    // We set the inbound DMA to transfer from the SPI receive FIFO to a memory buffer paced by the SPI RX FIFO DREQ
-    // We coinfigure the read address to remain unchanged for each element, but the write
-    // address to increment (so data is written throughout the buffer)
+    // We set the inbound DMA to transfer from the SPI receive FIFO to a memory
+    // buffer paced by the SPI RX FIFO DREQ We coinfigure the read address to
+    // remain unchanged for each element, but the write address to increment
+    // (so data is written throughout the buffer)
     dma_channel_config_rx = dma_channel_get_default_config(dma_rx);
     channel_config_set_transfer_data_size(&dma_channel_config_rx, DMA_SIZE_8);
     channel_config_set_dreq(&dma_channel_config_rx, DREQ_SPI0_RX);
@@ -175,10 +180,11 @@ void wizchip_spi_initialize(void)
 void wizchip_cris_initialize(void)
 {
     critical_section_init(&g_wizchip_cri_sec);
-    reg_wizchip_cris_cbfunc(wizchip_critical_section_lock, wizchip_critical_section_unlock);
+    reg_wizchip_cris_cbfunc(wizchip_critical_section_lock,
+                            wizchip_critical_section_unlock);
 }
 
-void wizchip_initialize(void)
+void wizchip_initialize(bool wait_link_up)
 {
     /* Deselect the FLASH : chip select high */
     wizchip_deselect();
@@ -197,7 +203,8 @@ void wizchip_initialize(void)
 #if (_WIZCHIP_ == W5100S)
     uint8_t memsize[2][4] = {{2, 2, 2, 2}, {2, 2, 2, 2}};
 #elif (_WIZCHIP_ == W5500)
-    uint8_t memsize[2][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
+    uint8_t memsize[2][8] = {{2, 2, 2, 2, 2, 2, 2, 2},
+                             {2, 2, 2, 2, 2, 2, 2, 2}};
 #endif
 
     if (ctlwizchip(CW_INIT_WIZCHIP, (void *)memsize) == -1)
@@ -216,7 +223,7 @@ void wizchip_initialize(void)
 
             return;
         }
-    } while (temp == PHY_LINK_OFF);
+    } while (wait_link_up && temp == PHY_LINK_OFF);
 }
 
 void wizchip_check(void)
@@ -225,7 +232,8 @@ void wizchip_check(void)
     /* Read version register */
     if (getVER() != 0x51)
     {
-        printf(" ACCESS ERR : VERSION != 0x51, read value = 0x%02x\n", getVER());
+        printf(" ACCESS ERR : VERSION != 0x51, read value = 0x%02x\n",
+               getVER());
 
         while (1)
             ;
@@ -234,7 +242,8 @@ void wizchip_check(void)
     /* Read version register */
     if (getVERSIONR() != 0x04)
     {
-        printf(" ACCESS ERR : VERSION != 0x04, read value = 0x%02x\n", getVERSIONR());
+        printf(" ACCESS ERR : VERSION != 0x04, read value = 0x%02x\n",
+               getVERSIONR());
 
         while (1)
             ;
@@ -259,19 +268,28 @@ void print_network_information(wiz_NetInfo net_info)
 
     if (net_info.dhcp == NETINFO_DHCP)
     {
-        printf("====================================================================================================\n");
+        printf("=============================================================="
+               "======================================\n");
         printf(" %s network configuration : DHCP\n\n", (char *)tmp_str);
     }
     else
     {
-        printf("====================================================================================================\n");
+        printf("=============================================================="
+               "======================================\n");
         printf(" %s network configuration : static\n\n", (char *)tmp_str);
     }
 
-    printf(" MAC         : %02X:%02X:%02X:%02X:%02X:%02X\n", net_info.mac[0], net_info.mac[1], net_info.mac[2], net_info.mac[3], net_info.mac[4], net_info.mac[5]);
-    printf(" IP          : %d.%d.%d.%d\n", net_info.ip[0], net_info.ip[1], net_info.ip[2], net_info.ip[3]);
-    printf(" Subnet Mask : %d.%d.%d.%d\n", net_info.sn[0], net_info.sn[1], net_info.sn[2], net_info.sn[3]);
-    printf(" Gateway     : %d.%d.%d.%d\n", net_info.gw[0], net_info.gw[1], net_info.gw[2], net_info.gw[3]);
-    printf(" DNS         : %d.%d.%d.%d\n", net_info.dns[0], net_info.dns[1], net_info.dns[2], net_info.dns[3]);
-    printf("====================================================================================================\n\n");
+    printf(" MAC         : %02X:%02X:%02X:%02X:%02X:%02X\n", net_info.mac[0],
+           net_info.mac[1], net_info.mac[2], net_info.mac[3], net_info.mac[4],
+           net_info.mac[5]);
+    printf(" IP          : %d.%d.%d.%d\n", net_info.ip[0], net_info.ip[1],
+           net_info.ip[2], net_info.ip[3]);
+    printf(" Subnet Mask : %d.%d.%d.%d\n", net_info.sn[0], net_info.sn[1],
+           net_info.sn[2], net_info.sn[3]);
+    printf(" Gateway     : %d.%d.%d.%d\n", net_info.gw[0], net_info.gw[1],
+           net_info.gw[2], net_info.gw[3]);
+    printf(" DNS         : %d.%d.%d.%d\n", net_info.dns[0], net_info.dns[1],
+           net_info.dns[2], net_info.dns[3]);
+    printf("=================================================================="
+           "==================================\n\n");
 }

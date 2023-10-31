@@ -38,7 +38,7 @@ extern "C" void pico_wizchip_init(void)
 
     wizchip_reset();
 
-    wizchip_initialize();
+    wizchip_initialize(false);
     wizchip_check();
 
     wizchip_1ms_timer_initialize(repeating_timer_callback);

@@ -1,17 +1,5 @@
-/**
- * Copyright (c) 2022 WIZnet Co.,Ltd
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
+#pragma once
 
-#ifndef _W5X00_SPI_H_
-#define _W5X00_SPI_H_
-
-/**
- * ----------------------------------------------------------------------------------------------------
- * Macros
- * ----------------------------------------------------------------------------------------------------
- */
 /* SPI */
 #define SPI_PORT spi0
 
@@ -22,13 +10,10 @@
 #define PIN_RST 20
 
 /* Use SPI DMA */
-//#define USE_SPI_DMA // if you want to use SPI DMA, uncomment.
+// #define USE_SPI_DMA // if you want to use SPI DMA, uncomment.
 
-/**
- * ----------------------------------------------------------------------------------------------------
- * Functions
- * ----------------------------------------------------------------------------------------------------
- */
+#include "wizchip_conf.h"
+
 /* W5x00 */
 /*! \brief Set CS pin
  *  \ingroup w5x00_spi
@@ -53,7 +38,8 @@ static inline void wizchip_deselect(void);
  *
  *  Set spi_read_blocking function.
  *  Read byte from SPI to rx_data buffer.
- *  Blocks until all data is transferred. No timeout, as SPI hardware always transfers at a known data rate.
+ *  Blocks until all data is transferred. No timeout, as SPI hardware always
+ * transfers at a known data rate.
  *
  *  \param none
  */
@@ -64,7 +50,8 @@ static uint8_t wizchip_read(void);
  *
  *  Set spi_write_blocking function.
  *  Write byte from tx_data buffer to SPI device.
- *  Blocks until all data is transferred. No timeout, as SPI hardware always transfers at a known data rate.
+ *  Blocks until all data is transferred. No timeout, as SPI hardware always
+ * transfers at a known data rate.
  *
  *  \param tx_data Buffer of data to write
  */
@@ -152,7 +139,7 @@ void wizchip_reset(void);
  *
  *  \param none
  */
-void wizchip_initialize(void);
+void wizchip_initialize(bool wait_link_up);
 
 /*! \brief Check chip version
  *  \ingroup w5x00_spi
@@ -176,10 +163,9 @@ void network_initialize(wiz_NetInfo net_info);
 /*! \brief Print network information
  *  \ingroup w5x00_spi
  *
- *  Print network information about MAC address, IP address, Subnet mask, Gateway, DHCP and DNS address.
+ *  Print network information about MAC address, IP address, Subnet mask,
+ * Gateway, DHCP and DNS address.
  *
  *  \param net_info network information.
  */
 void print_network_information(wiz_NetInfo net_info);
-
-#endif /* _W5X00_SPI_H_ */

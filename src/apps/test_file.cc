@@ -5,8 +5,6 @@
 
 void core1_app(void)
 {
-    pico_wizchip_init();
-
     while (true)
     {
         // some kind of state machine thing?
@@ -43,6 +41,7 @@ void init(void)
 
     gpio_init(led_pin);
     gpio_set_dir(led_pin, GPIO_OUT);
+    bi_decl(bi_1pin_with_name(led_pin, "LED"));
 
     /* Initialize UART pins and peripheral. */
     if (stdio_uart)
@@ -51,6 +50,8 @@ void init(void)
         gpio_set_function(PICO_DEFAULT_UART_RX_PIN, GPIO_FUNC_UART);
         uart_init(stdio_uart, 115200);
     }
+
+    pico_wizchip_init();
 }
 
 int main(void)
