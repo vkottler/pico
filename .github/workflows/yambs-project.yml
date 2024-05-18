@@ -9,13 +9,15 @@ on:
 
 env:
   GITHUB_API_TOKEN: ${{secrets.API_TOKEN}}
+  CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11]
+        python-version: [3.11, 3.12]
+
     env:
       PYTHON_VERSION: ${{matrix.python-version}}
 
@@ -39,6 +41,13 @@ jobs:
       - run: mk dz-sync
 
       - run: mk yaml python-lint python-sa
+
+      - name: setup clang 17
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x ./llvm.sh
+          sudo ./llvm.sh 17
+          rm llvm.sh
       - run: sudo apt-get install doxygen
       - run: mk download-toolchains
       - run: mk g
