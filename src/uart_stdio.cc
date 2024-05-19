@@ -1,8 +1,8 @@
 /* internal */
 #include "uart_stdio.h"
 
-// uart_inst_t *const stdio_uart = uart0;
-uart_inst_t *const stdio_uart = nullptr;
+uart_inst_t *const stdio_uart = uart0;
+// uart_inst_t *const stdio_uart = nullptr;
 static UartInterface uart(stdio_uart);
 
 UartInterface &get_stdio_uart()
