@@ -16,9 +16,9 @@ void do_led(CommandLine &cli)
 
 void do_exit(CommandLine &cli)
 {
-    /* could control app vs. bootloader at some point */
-    (void)cli;
+    /* First argument: true/false for bootloader vs. application reset. */
     bool bootloader = true;
+    cli.as_bool<0>(bootloader);
 
     printf("Resetting to %s.\n", bootloader ? "bootloader" : "application");
     reset(bootloader);

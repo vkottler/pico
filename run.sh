@@ -1,12 +1,6 @@
 #!/bin/bash
 
-TOOLCHAIN=arm-picolibc-eabi
-
-TARGET=pico
-APP=test_file
-
-source ./.env
-set -x
+source ./setme.sh
 
 ninja
-./toolchains/$TOOLCHAIN/bin/$TOOLCHAIN-gdb ./build/$TARGET/apps/$APP.elf
+$GDB $APP_ELF
