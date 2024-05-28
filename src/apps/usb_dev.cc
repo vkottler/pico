@@ -40,7 +40,7 @@ static uint8_t dev_addr = 0;
 static volatile bool configured = false;
 
 // Global data buffer for EP0
-static uint8_t ep0_buf[64];
+static uint8_t ep0_buf[USB_MAX_PACKET_SIZE];
 
 // Struct defining the device configuration
 static struct usb_device_configuration dev_config = {
@@ -49,43 +49,44 @@ static struct usb_device_configuration dev_config = {
     .config_descriptor = &config_descriptor,
     .lang_descriptor = lang_descriptor,
     .descriptor_strings = descriptor_strings,
-    .endpoints = {{
-                      .descriptor = &ep0_out,
-                      .handler = &ep0_out_handler,
-                      .endpoint_control = NULL, // NA for EP0
-                      .buffer_control = &usb_dpram->ep_buf_ctrl[0].out,
-                      // EP0 in and out share a data buffer
-                      .data_buffer = &usb_dpram->ep0_buf_a[0],
-                      .next_pid = 0,
-                  },
-                  {
-                      .descriptor = &ep0_in,
-                      .handler = &ep0_in_handler,
-                      .endpoint_control = NULL, // NA for EP0,
-                      .buffer_control = &usb_dpram->ep_buf_ctrl[0].in,
-                      // EP0 in and out share a data buffer
-                      .data_buffer = &usb_dpram->ep0_buf_a[0],
-                      .next_pid = 0,
-                  },
-                  {
-                      .descriptor = &ep1_out,
-                      .handler = &ep1_out_handler,
-                      // EP1 starts at offset 0 for endpoint control
-                      .endpoint_control = &usb_dpram->ep_ctrl[0].out,
-                      .buffer_control = &usb_dpram->ep_buf_ctrl[1].out,
-                      // First free EPX buffer
-                      .data_buffer = &usb_dpram->epx_data[0 * 64],
-                      .next_pid = 0,
-                  },
-                  {
-                      .descriptor = &ep2_in,
-                      .handler = &ep2_in_handler,
-                      .endpoint_control = &usb_dpram->ep_ctrl[1].in,
-                      .buffer_control = &usb_dpram->ep_buf_ctrl[2].in,
-                      // Second free EPX buffer
-                      .data_buffer = &usb_dpram->epx_data[1 * 64],
-                      .next_pid = 0,
-                  }}};
+    .endpoints = {
+        {
+            .descriptor = &ep0_out,
+            .handler = &ep0_out_handler,
+            .endpoint_control = NULL, // NA for EP0
+            .buffer_control = &usb_dpram->ep_buf_ctrl[0].out,
+            // EP0 in and out share a data buffer
+            .data_buffer = &usb_dpram->ep0_buf_a[0],
+            .next_pid = 0,
+        },
+        {
+            .descriptor = &ep0_in,
+            .handler = &ep0_in_handler,
+            .endpoint_control = NULL, // NA for EP0,
+            .buffer_control = &usb_dpram->ep_buf_ctrl[0].in,
+            // EP0 in and out share a data buffer
+            .data_buffer = &usb_dpram->ep0_buf_a[0],
+            .next_pid = 0,
+        },
+        {
+            .descriptor = &ep1_out,
+            .handler = &ep1_out_handler,
+            // EP1 starts at offset 0 for endpoint control
+            .endpoint_control = &usb_dpram->ep_ctrl[0].out,
+            .buffer_control = &usb_dpram->ep_buf_ctrl[1].out,
+            // First free EPX buffer
+            .data_buffer = &usb_dpram->epx_data[0 * USB_MAX_PACKET_SIZE],
+            .next_pid = 0,
+        },
+        {
+            .descriptor = &ep2_in,
+            .handler = &ep2_in_handler,
+            .endpoint_control = &usb_dpram->ep_ctrl[1].in,
+            .buffer_control = &usb_dpram->ep_buf_ctrl[2].in,
+            // Second free EPX buffer
+            .data_buffer = &usb_dpram->epx_data[1 * USB_MAX_PACKET_SIZE],
+            .next_pid = 0,
+        }}};
 
 /**
  * @brief Take a buffer pointer located in the USB RAM and return as an offset
@@ -225,7 +226,7 @@ void usb_start_transfer(struct usb_endpoint_configuration *ep, uint8_t *buf,
 {
     // We are asserting that the length is <= 64 bytes for simplicity of the
     // example. For multi packet transfers see the tinyusb port.
-    assert(len <= 64);
+    assert(len <= USB_MAX_PACKET_SIZE);
 
     printf("Start transfer of len %d on ep addr 0x%x\n", len,
            ep->descriptor->bEndpointAddress);
@@ -276,9 +277,7 @@ int main(void)
     App app(register_commands);
     auto &uart = get_stdio_uart();
 
-    // usb_device_init();
-
-    /*
+    usb_device_init();
 
     // Wait until configured
     while (!configured)
@@ -287,9 +286,8 @@ int main(void)
     }
 
     // Get ready to rx from host
-    usb_start_transfer(usb_get_endpoint_configuration(EP1_OUT_ADDR), NULL, 64);
-
-    */
+    usb_start_transfer(usb_get_endpoint_configuration(EP1_OUT_ADDR), NULL,
+                       USB_MAX_PACKET_SIZE);
 
     bool keep_going = true;
     while (keep_going)
@@ -343,7 +341,8 @@ void ep2_in_handler(uint8_t *buf, uint16_t len)
 {
     printf("Sent %d bytes to host\n", len);
     // Get ready to rx again from host
-    usb_start_transfer(usb_get_endpoint_configuration(EP1_OUT_ADDR), NULL, 64);
+    usb_start_transfer(usb_get_endpoint_configuration(EP1_OUT_ADDR), NULL,
+                       USB_MAX_PACKET_SIZE);
 }
 
 /**
@@ -651,7 +650,7 @@ void usb_bus_reset(void)
  *
  */
 /// \tag::isr_setup_packet[]
-void isr_usbctrl(void)
+extern "C" void isr_usbctrl(void)
 {
     // USB interrupt handler
     uint32_t status = usb_hw->ints;

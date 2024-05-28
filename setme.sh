@@ -11,7 +11,9 @@ test $APP
 
 source ./.env
 
-GDB=./toolchains/$TOOLCHAIN/bin/$TOOLCHAIN-gdb
+# Not working.
+# GDB=./toolchains/$TOOLCHAIN/bin/$TOOLCHAIN-gdb
+GDB=gdb-multiarch
 test $GDB
 
 APP_ELF=./build/$TARGET/apps/$APP.elf
