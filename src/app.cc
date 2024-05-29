@@ -25,7 +25,7 @@ void init_led(void)
 {
     gpio_init(led_pin);
     gpio_set_dir(led_pin, GPIO_OUT);
-    bi_decl(bi_1pin_with_name(led_pin, "LED"));
+    bi_decl(bi_1pin_with_name(led_pin, "BLED"));
 }
 
 bool dispatch_uart(UartInterface &uart, App &app)
