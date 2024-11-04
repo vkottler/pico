@@ -1,7 +1,10 @@
 ---
 name: pico
+owner: vkottler
 description: A firmware project for Raspberry Pi microcontrollers.
 embedded: true
+
+main_branch: master
 
 # Caused by pico-sdk.
 format: false
@@ -9,4 +12,4 @@ format: false
 version:
   major: 0
   minor: 3
-  patch: 0
+  patch: 1

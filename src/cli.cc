@@ -1,24 +1,18 @@
 #include "cli.h"
 #include "system.h"
 
-static inline void gpio_toggle(uint gpio)
-{
-    gpio_xor_mask(1u << gpio);
-}
-
 void do_led(CommandLine &cli)
 {
     (void)cli;
-
-    gpio_toggle(led_pin);
+    gpio_xor_mask(1u << led_pin);
     printf("Toggling LED.\n");
 }
 
 void do_exit(CommandLine &cli)
 {
-    /* could control app vs. bootloader at some point */
-    (void)cli;
+    /* First argument: true/false for bootloader vs. application reset. */
     bool bootloader = true;
+    cli.as_bool<0>(bootloader);
 
     printf("Resetting to %s.\n", bootloader ? "bootloader" : "application");
     reset(bootloader);
