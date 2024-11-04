@@ -1,16 +1,10 @@
 #include "cli.h"
 #include "system.h"
 
-static inline void gpio_toggle(uint gpio)
-{
-    gpio_xor_mask(1u << gpio);
-}
-
 void do_led(CommandLine &cli)
 {
     (void)cli;
-
-    gpio_toggle(led_pin);
+    gpio_xor_mask(1u << led_pin);
     printf("Toggling LED.\n");
 }
 

@@ -2,6 +2,7 @@
 
 source ./setme.sh
 
+# -d
 OPENOCD_ARGS=()
 
 run_openocd() {
