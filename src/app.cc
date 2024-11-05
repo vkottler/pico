@@ -8,9 +8,10 @@
 void init_clock(void)
 {
     // set a system clock frequency in khz
-    set_sys_clock_khz(PLL_SYS_KHZ, true);
+    // set_sys_clock_khz(PLL_SYS_KHZ, true);
 
     // configure the specified clock
+    /*
     clock_configure(
         clk_peri,
         0,                                                // No glitchless mux
@@ -19,6 +20,7 @@ void init_clock(void)
         PLL_SYS_KHZ * 1000,                               // Input frequency
         PLL_SYS_KHZ * 1000 // Output (must be same as no divider)
     );
+    */
 }
 
 void init_led(void)

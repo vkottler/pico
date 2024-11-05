@@ -1,4 +1,4 @@
-INCLUDE pico-sdk/src/rp2_common/pico_standard_link/memmap_default.ld
+INCLUDE pico-sdk/src/rp2_common/pico_crt0/rp2040/memmap_default.ld
 
 /* https://github.com/raspberrypi/pico-sdk/issues/1381 */
 PROVIDE (__heap_start = __end__);

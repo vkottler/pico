@@ -14,7 +14,7 @@ static constexpr uint scl_pin = 9;
 
 static inline void init(void)
 {
-    init_clock();
+    // init_clock();
     init_led();
 
     gpio_init(led1_pin);
@@ -42,7 +42,7 @@ static inline void init(void)
         uart_init(stdio_uart, 115200);
     }
 
-    core1_init();
+    // core1_init();
 }
 
 void do_led1(CommandLine &cli)

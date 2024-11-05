@@ -2,11 +2,10 @@
 
 source ./setme.sh
 
-# -d
-OPENOCD_ARGS=()
+OPENOCD_ARGS=(-s "$HOME/src/raspberrypi/openocd/tcl")
 
 run_openocd() {
-	openocd "${OPENOCD_ARGS[@]}"
+	"$(which openocd)" "${OPENOCD_ARGS[@]}"
 }
 
 add_rp2040_args() {
