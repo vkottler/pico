@@ -1,0 +1,1 @@
+../pico-sdk/src/rp2_common/pico_crt0/embedded_start_block.inc.S

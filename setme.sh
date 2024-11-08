@@ -6,7 +6,7 @@ test $TOOLCHAIN
 TARGET=pico
 test $TARGET
 
-APP=usb_dev
+APP=test_app
 test $APP
 
 source ./.env
